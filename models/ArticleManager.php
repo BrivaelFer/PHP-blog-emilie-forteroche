@@ -9,10 +9,20 @@ class ArticleManager extends AbstractEntityManager
      * Récupère tous les articles.
      * @return array : un tableau d'objets Article.
      */
-    public function getAllArticles() : array
+    public function getAllArticles(array $params = null) : array
     {
         $sql = "SELECT * FROM article";
-        $result = $this->db->query($sql);
+        if($params)
+        {
+            
+            $sql .= $this->generateOrder($params[0], $params[1]);
+            $result = $this->db->query($sql);
+        }
+        else
+        {
+            $result = $this->db->query($sql);
+        }
+        
         $articles = [];
 
         while ($article = $result->fetch()) {
@@ -91,5 +101,24 @@ class ArticleManager extends AbstractEntityManager
     {
         $sql = "DELETE FROM article WHERE id = :id";
         $this->db->query($sql, ['id' => $id]);
+    }
+    /**
+     * Incrémente le compteur de vues d'un article.
+     * @param int $id : id de l'article visé
+     * @return void
+     */
+    public function incViewCountArticle(int $id) : void
+    {
+        $sql = "UPDATE article SET view_count = view_count + 1 WHERE id = :id";
+        $this->db->query($sql,['id' => $id]);
+    }
+
+    private function generateOrder(string $col, int $order): string
+    {
+        if(preg_match('/[^a-zA-Z0-9_]/', $col) == 1 || strlen($col) > 25)
+        {
+            return "";
+        }
+        return " ORDER BY $col ". (($order == -1)? 'DESC': 'ASC');
     }
 }

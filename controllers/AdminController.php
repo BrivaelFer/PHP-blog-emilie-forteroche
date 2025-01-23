@@ -176,4 +176,88 @@ class AdminController {
         // On redirige vers la page d'administration.
         Utils::redirect("admin");
     }
+
+    public function showArticleMonitor() : void
+    {
+        $this->checkIfUserIsConnected();
+
+        $tri = Utils::request('tri');
+        $order = Utils::request('order');
+    
+ 
+        $articleManager = new ArticleManager();
+        $commentManager = new CommentManager();
+
+        $commentCounts = [];
+
+        if($tri && $order && $tri != 'comment')
+        {
+            $articles = $articleManager->getAllArticles([$tri, $order]);
+        }
+        else
+        {
+            $articles = $articleManager->getAllArticles();
+        }
+        
+        foreach($articles as $key => $article)
+        {
+            $commentCounts[$key] = $commentManager->countCommentByArticleId($article->getId());
+        }
+
+        if($tri == 'comment')
+        {
+            array_multisort(
+                $commentCounts, 
+                ($order == -1)? SORT_DESC:SORT_ASC, 
+                $articles
+            );
+        }
+        
+        $filtre = [
+            'title' => 0,
+            'view_count' => 0,
+            'date_creation' => 0,
+            'date_update' => 0,
+            'comment' => 0,
+        ];
+        if($tri && $order)
+        {
+            $filtre[$tri] = $order;
+        }
+
+        $view = new View("Monitor");
+        $view->render("monitor", [
+            'articles' => $articles,
+            'commentCounts' => $commentCounts,
+            'filtre' => $filtre
+        ]);
+
+    }
+
+    public function showCommentMonitor()
+    {
+        $this->checkIfUserIsConnected();
+
+        $idArticle = Utils::request('idArticle') != "" ? Utils::request('idArticle'): null;
+        $dateOrder = Utils::request('dateOrder') != "" ? Utils::request('dateOrder'): null;
+        $search = Utils::request('search') != "" ? Utils::request('search'): null;
+
+
+        $articleManager = new ArticleManager();
+        $articles = $articleManager->getAllArticles();
+
+        $commentManager = new CommentManager();
+        $comments = $commentManager->getCommentForMonitor($idArticle, $dateOrder, $search);
+
+        $view = new View("CommentMonitor");
+        $view->render('adminComment', [
+            'articles' => $articles,
+            'comments' => $comments,
+            'filter' => [
+                'idArticle' => $idArticle,
+                'dateOrder' => $dateOrder,
+                'search' => $search
+            ]
+        ]);
+    }
 }

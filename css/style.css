@@ -20,6 +20,7 @@
     --dateColor: #3f56a4;
     --quoteColor: #c5cbe4;
     --commentPaleColor: #99a140;
+    --commentLessPaleColor:#7e8535;
     --commentColor: #255E33;
 }
 
@@ -337,6 +338,48 @@ a.info {
     border: 1px solid var(--backgroundColor);
 }
 
+.basic_table {
+    margin-bottom: 20px;
+    color: white;
+}
+.basic_table th {
+    background-color: var(--commentColor);
+}
+.basic_table td {
+    background-color: var(--commentPaleColor);
+}
+.basic_table>tbody tr:nth-child(even)>* {
+    background-color: var(--commentLessPaleColor);
+}
+
+.tri-down::before {
+    content: '▼';
+}
+.tri-up::before {
+    content: '▲';
+}
+.tri-down,
+.tri-up{
+    opacity: 0.5;
+}
+.tri-down:hover,
+.tri-up:hover{
+    opacity: 1;
+}
+.tri-actif {
+    opacity: 1;
+}
+.delete-button {
+    background-color: darkred;
+    color: white;
+    width: 19px;
+    height: 23px;
+    padding: 0 3px;
+}
+.comment_search {
+    display: flex;
+    justify-content: space-around;
+}
 /** 
  * Footer global de la page.
  */

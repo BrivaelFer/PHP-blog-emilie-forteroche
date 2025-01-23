@@ -44,4 +44,26 @@ class CommentController
         // On redirige vers la page de l'article.
         Utils::redirect("showArticle", ['id' => $idArticle]);
     }
+    public function deleteComment()
+    {
+        $this->checkIfUserIsConnected();
+
+        $id = Utils::request("id", -1);
+
+        if($id == -1) Utils::redirect('home');
+
+        $commentManager = new CommentManager();
+        $comment = $commentManager->getCommentById($id);
+        $idArticle = $comment->getIdArticle();
+        $result = $commentManager->deleteComment($comment);
+
+        Utils::redirect("showArticle", ['id' => $idArticle]);
+    }
+    private function checkIfUserIsConnected() : void
+    {
+        // On vérifie que l'utilisateur est connecté.
+        if (!isset($_SESSION['user'])) {
+            Utils::redirect("home");
+        }
+    }
 }

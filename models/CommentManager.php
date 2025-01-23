@@ -66,4 +66,36 @@ class CommentManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    public function getCommentForMonitor(?int $idArticle = null, ?int $dateOrder = null, ?string $search = null): array
+    {
+        $sql = "SELECT * FROM comment"; 
+        $params = [];
+        if($idArticle){
+            $sql .= " WHERE id_article = :idArticle";
+            $params['idArticle'] = $idArticle;
+        }
+        if($search){
+            $sql .= (($idArticle)? " AND":" WHERE") . ' content LIKE :search';
+            $params['search'] = '%'. $search . '%';
+        }
+        if($dateOrder){
+            $sql .= " ORDER BY date_creation " . (($dateOrder == -1)? ' DESC': ' ASC');
+        }
+
+        $result = $this->db->query($sql, $params);
+        $comments = [];
+
+        while ($comment = $result->fetch()) {
+            $comments[] = new Comment($comment);
+        }
+        return $comments;
+    }
+
+    public function countCommentByArticleId(int $idArticle) : int
+    {
+        $sql = "SELECT count(id) as 'count' FROM comment WHERE id_article = :idArticle";
+        $result = $this->db->query($sql, ['idArticle' => $idArticle]);
+        return $result->fetch()['count'];
+    }
+
 }
