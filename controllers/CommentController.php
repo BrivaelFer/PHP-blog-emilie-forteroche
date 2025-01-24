@@ -49,6 +49,7 @@ class CommentController
         $this->checkIfUserIsConnected();
 
         $id = Utils::request("id", -1);
+        $from = Utils::request("from", null);
 
         if($id == -1) Utils::redirect('home');
 
@@ -57,7 +58,15 @@ class CommentController
         $idArticle = $comment->getIdArticle();
         $result = $commentManager->deleteComment($comment);
 
-        Utils::redirect("showArticle", ['id' => $idArticle]);
+        if(!$from)
+        {
+            Utils::redirect("showArticle", ['id' => $idArticle]);
+        }
+        else
+        {
+            Utils::redirect($from);
+        }
+        
     }
     private function checkIfUserIsConnected() : void
     {

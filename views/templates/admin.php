@@ -21,4 +21,5 @@
 <div class="button-box">
     <a class="submit" href="index.php?action=showUpdateArticleForm">Ajouter un article</a>
     <a class="submit" href="index.php?action=monitor">Moniteur d'article</a>
+    <a class="submit" href="index.php?action=adminComment">Moniteur d'commentaire</a>
 </div>

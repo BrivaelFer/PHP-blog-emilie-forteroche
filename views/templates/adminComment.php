@@ -51,7 +51,7 @@ $filterSearch = (isset($filter['searche']))? $filter['idArticle']: false;
                     <td><?= $comment->getDateCreation()->format('d-m-Y')?></td>
                     <td>
                         <div titre="supprimer" class="delete-button">
-                            <a href="index.php?action=deleteComment&id=<?= $comment->getId()?>">✖</a>
+                            <a href="index.php?action=deleteComment&id=<?= $comment->getId()?>&from=adminComment">✖</a>
                         </div>
                     </td>
                 </tr>    
